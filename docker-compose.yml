@@ -25,16 +25,22 @@ services:
       traefik.docker.network: traefik-public
       traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080
 
-      # HTTP router configuration
+      # HTTP router configuration for domain
       traefik.http.routers.traefik-dashboard-http.entrypoints: http
       traefik.http.routers.traefik-dashboard-http.rule: Host(`${TRAEFIK_DOMAIN?Variable not set}`)
 
-      # HTTPS router configuration
+      # HTTPS router configuration for domain
       traefik.http.routers.traefik-dashboard-https.entrypoints: https
       traefik.http.routers.traefik-dashboard-https.rule: Host(`${TRAEFIK_DOMAIN?Variable not set}`)
       traefik.http.routers.traefik-dashboard-https.tls: true
       traefik.http.routers.traefik-dashboard-https.tls.certresolver: le
       traefik.http.routers.traefik-dashboard-https.service: api@internal
+
+      # HTTP router configuration for localhost
+      # traefik.http.routers.traefik-dashboard-localhost-http.entrypoints: http
+      # traefik.http.routers.traefik-dashboard-localhost-http.rule: Host(`localhost`)
+      # traefik.http.routers.traefik-dashboard-localhost-http.service: api@internal
+
 
       # HTTPS redirect middleware
       traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
@@ -113,12 +119,24 @@ services:
       traefik.http.routers.api-mt5-https.service: api-mt5-service
 
       traefik.http.services.api-mt5-service.loadbalancer.server.port: 5001
+
+      # Router for localhost - VNC
+      traefik.http.routers.vnc-mt5-localhost-http.rule: Host(`localhost`)
+      traefik.http.routers.vnc-mt5-localhost-http.entrypoints: http
+      traefik.http.routers.vnc-mt5-localhost-http.service: vnc-mt5-service
+
+      # Router for localhost - API
+      traefik.http.routers.api-mt5-localhost-http.rule: Host(`localhost`) && PathPrefix(`/api`)
+      traefik.http.routers.api-mt5-localhost-http.entrypoints: http
+      traefik.http.routers.api-mt5-localhost-http.service: api-mt5-service
+
+
     logging: *default-logging
     depends_on:
       - traefik
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15
     container_name: postgres
     restart: unless-stopped
     env_file:
@@ -155,6 +173,7 @@ services:
       traefik.enable: true
       traefik.docker.network: traefik-public
 
+      # Router for domain
       traefik.http.routers.django-http.rule: Host(`${DJANGO_DOMAIN}`)
       traefik.http.routers.django-http.entrypoints: http
       traefik.http.routers.django-http.middlewares: https-redirect
@@ -172,6 +191,19 @@ services:
       traefik.http.routers.django-static.service: django-service
       traefik.http.middlewares.static-stripprefix.stripprefix.prefixes: /static
       traefik.http.routers.django-static.middlewares: static-stripprefix@docker
+
+      # Router for localhost
+      traefik.http.routers.django-localhost-http.rule: Host(`localhost`) && PathPrefix(`/django`)
+      traefik.http.routers.django-localhost-http.entrypoints: http
+      traefik.http.routers.django-localhost-http.service: django-service
+
+      # Router for static files on localhost
+      traefik.http.routers.django-static-localhost.rule: Host(`localhost`) && PathPrefix(`/static/`)
+      traefik.http.routers.django-static-localhost.service: django-service
+      traefik.http.middlewares.static-stripprefix-localhost.stripprefix.prefixes: /static
+      traefik.http.routers.django-static-localhost.middlewares: static-stripprefix-localhost@docker
+
+
     logging: *default-logging
 
   redis:
@@ -268,7 +300,12 @@ services:
       traefik.http.routers.grafana.entrypoints: https
       traefik.http.routers.grafana.tls: true
       traefik.http.routers.grafana.tls.certresolver: le
-      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.service: grafana
+
+      # Router for localhost
+      traefik.http.routers.grafana-localhost-http.rule: Host(`localhost`) && PathPrefix(`/grafana`)
+      traefik.http.routers.grafana-localhost-http.entrypoints: http
+      traefik.http.routers.grafana-localhost-http.service: grafana
     logging: *default-logging
 
   prometheus:
