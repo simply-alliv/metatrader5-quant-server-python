@@ -94,6 +94,8 @@ def send_market_order_endpoint():
             return jsonify({"error": "Failed to get symbol price"}), 400
 
         # Set price based on order type
+        print(data['type'])
+        print(mt5.ORDER_TYPE_BUY)
         if data['type'] == mt5.ORDER_TYPE_BUY:
             request_data["price"] = tick.ask
         elif data['type'] == mt5.ORDER_TYPE_SELL:
