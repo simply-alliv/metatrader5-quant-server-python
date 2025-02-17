@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = os.getenv('MT5_API_URL')
 
-def symbol_info_tick(symbol: str) -> pd.DataFrame:
+def symbol_info_tick(symbol) -> pd.DataFrame:
     try:
         url = f"{BASE_URL}/symbol_info_tick/{symbol}"
         response = requests.get(url)
