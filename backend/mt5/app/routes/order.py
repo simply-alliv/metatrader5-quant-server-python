@@ -124,7 +124,7 @@ def send_market_order_endpoint():
         # Send order
         result = mt5.order_send(request_data)
         if result is None:  # Handle failed order submission
-            logger.error(f"Error in send_market_order: {request_data} - {mt5.ORDER_FILLING_FOK} - {mt5.ORDER_FILLING_IOC")
+            logger.error(f"Error in send_market_order: {request_data} - {mt5.ORDER_FILLING_FOK} - {mt5.ORDER_FILLING_IOC}")
             error_code, error_str = mt5.last_error()
             return jsonify({
                 "error": "Order failed",
