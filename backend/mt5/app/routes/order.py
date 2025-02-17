@@ -80,8 +80,8 @@ def send_market_order_endpoint():
             'SELL': mt5.ORDER_TYPE_SELL
         }
         order_type_filling_dict = {
-            'ORDER_FILLING_IOC': mt5.mt5.ORDER_FILLING_IOC,
-            'ORDER_FILLING_FOK': mt5.mt5.ORDER_FILLING_FOK
+            'ORDER_FILLING_IOC': mt5.ORDER_FILLING_IOC,
+            'ORDER_FILLING_FOK': mt5.ORDER_FILLING_FOK
         }
 
         order_type_str = data['type'].upper()  # Ensure case-insensitivity
