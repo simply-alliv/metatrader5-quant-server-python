@@ -75,12 +75,22 @@ def send_market_order_endpoint():
         if not all(field in data for field in required_fields):
             return jsonify({"error": "Missing required fields"}), 400
 
+        order_type_dict = {
+            'BUY': mt5.ORDER_TYPE_BUY,
+            'SELL': mt5.ORDER_TYPE_SELL
+        }
+
+        order_type_str = data['type'].upper()  # Ensure case-insensitivity
+
+        if order_type_str not in order_type_dict:
+            return jsonify({"error": "Invalid order type"}), 400
+
         # Prepare the order request
         request_data = {
             "action": mt5.TRADE_ACTION_DEAL,
             "symbol": data['symbol'],
             "volume": float(data['volume']),
-            "type": data['type'],
+            "type": order_type_dict[order_type_str],
             "deviation": data.get('deviation', 20),
             "magic": data.get('magic', 0),
             "comment": data.get('comment', ''),
@@ -92,16 +102,6 @@ def send_market_order_endpoint():
         tick = mt5.symbol_info_tick(data['symbol'])
         if tick is None:
             return jsonify({"error": "Failed to get symbol price"}), 400
-
-        order_type_dict = {
-            'BUY': mt5.ORDER_TYPE_BUY,
-            'SELL': mt5.ORDER_TYPE_SELL
-        }
-
-        order_type_str = data['type'].upper()  # Ensure case-insensitivity
-
-        if order_type_str not in order_type_dict:
-            return jsonify({"error": "Invalid order type"}), 400
 
         # Set price based on order type
         if order_type_str == 'BUY':
