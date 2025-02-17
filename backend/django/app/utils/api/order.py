@@ -31,7 +31,7 @@ def send_market_order(symbol: str, volume: float, order_type: str, sl: float, tp
         request = {
             "symbol": symbol,
             "volume": float(volume),
-            "order_type": order_type_str,
+            "type": order_type_str,
             "sl": float(sl),
             "deviation": int(deviation),
             "magic": int(magic),
