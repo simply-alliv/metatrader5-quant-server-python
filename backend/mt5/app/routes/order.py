@@ -81,13 +81,18 @@ def send_market_order_endpoint():
         }
         order_type_filling_dict = {
             'ORDER_FILLING_IOC': mt5.ORDER_FILLING_IOC,
-            'ORDER_FILLING_FOK': mt5.ORDER_FILLING_FOK
+            'ORDER_FILLING_FOK': mt5.ORDER_FILLING_FOK,
+            'ORDER_FILLING_RETURN': mt5.ORDER_FILLING_RETURN,
         }
 
         order_type_str = data['type'].upper()  # Ensure case-insensitivity
+        order_type_filling_str = data.get('type_filling', 'ORDER_FILLING_IOC')
 
         if order_type_str not in order_type_dict:
             return jsonify({"error": "Invalid order type"}), 400
+
+        if order_type_filling_str not in order_type_filling_dict:
+            return jsonify({"error": "Invalid order type filling"}), 400
 
         # Prepare the order request
         request_data = {
@@ -99,7 +104,7 @@ def send_market_order_endpoint():
             "magic": data.get('magic', 0),
             "comment": data.get('comment', ''),
             "type_time": mt5.ORDER_TIME_GTC,
-            "type_filling": data.get('type_filling', mt5.ORDER_FILLING_IOC),
+            "type_filling": order_type_filling_dict[order_type_filling_str],
         }
 
         # Get current price
