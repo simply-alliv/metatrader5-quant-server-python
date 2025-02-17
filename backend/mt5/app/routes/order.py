@@ -119,6 +119,13 @@ def send_market_order_endpoint():
 
         # Send order
         result = mt5.order_send(request_data)
+        if result is None:  # Handle failed order submission
+            error_code, error_str = mt5.last_error()
+            return jsonify({
+                "error": "Order failed",
+                "mt5_error": error_str
+            }), 400
+        
         if result.retcode != mt5.TRADE_RETCODE_DONE:
             error_code, error_str = mt5.last_error()
             
