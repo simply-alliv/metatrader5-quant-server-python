@@ -52,6 +52,10 @@ node_modules/
 
 # Production build files
 /build
+/config
+
+# Local scripts and tools
+/tools
 
 # Debug
 npm-debug.log*
