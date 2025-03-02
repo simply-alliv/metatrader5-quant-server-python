@@ -208,7 +208,7 @@ CELERY_BEAT_SCHEDULE = {
     'run-quant-entry-algorithm': {
         'task': 'quant.tasks.run_quant_entry_algorithm',  # This should match the @shared_task name
         'schedule': 60.0 * 1,
-    },
+    }
     # 'run-quant-trailing-stop-algorithm': {
     #     'task': 'quant.tasks.run_quant_trailing_stop_algorithm',  # This should match the @shared_task name
     #     'schedule': 15,
