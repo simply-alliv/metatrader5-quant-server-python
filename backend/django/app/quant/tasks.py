@@ -21,23 +21,3 @@ def run_quant_entry_algorithm():
     except Exception as e:
         logger.error(f"Error in quant entry algorithm: {e}")
 
-# @shared_task(name='quant.tasks.run_quant_trailing_stop_algorithm', max_retries=3, soft_time_limit=30)
-# def run_quant_trailing_stop_algorithm():
-#     try:
-#         logger.info("Starting quant trailing stop algorithm...")
-#         trailing_stop_algorithm()
-#     except SoftTimeLimitExceeded:
-#         logger.error("Task timed out during trailing stop algorithm.")
-#     except Exception as e:
-#         logger.error(f"Error in quant trailing stop algorithm: {e}")
-
-# @shared_task(name='quant.tasks.run_quant_close_algorithm', max_retries=3, soft_time_limit=30)
-# def run_quant_close_algorithm():
-#     try:
-#         logger.info("Starting quant close algorithm...")
-#         close_algorithm()
-#     except SoftTimeLimitExceeded:
-#         logger.error("Task timed out.")
-#     except Exception as e:
-#         logger.error(f"Error in quant close algorithm: {e}")
-
