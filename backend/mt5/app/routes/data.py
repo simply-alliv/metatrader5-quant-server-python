@@ -203,3 +203,104 @@ def fetch_data_range_endpoint():
     except Exception as e:
         logger.error(f"Error in fetch_data_range: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
+    
+@data_bp.route('/account_info', methods=['GET'])
+@swag_from({
+    'tags': ['Data'],
+    'responses': {
+        200: {
+            'description': 'Account information fetched successfully.',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'login': {'type': 'integer'},
+                    'trade_mode': {'type': 'integer'},
+                    'leverage': {'type': 'integer'},
+                    'limit_orders': {'type': 'integer'},
+                    'margin_so_mode': {'type': 'integer'},
+                    'trade_allowed': {'type': 'boolean'},
+                    'trade_expert': {'type': 'boolean'},
+                    'margin_mode': {'type': 'integer'},
+                    'currency_digits': {'type': 'integer'},
+                    'margin_initial': {'type': 'number'},
+                    'margin_maintenance': {'type': 'number'},
+                    'margin_rate_initial': {'type': 'number'},
+                    'margin_rate_maintenance': {'type': 'number'},
+                    'margin_liquidation': {'type': 'number'},
+                    'margin_call': {'type': 'number'},
+                    'balance': {'type': 'number'},
+                    'credit': {'type': 'number'},
+                    'equity': {'type': 'number'},
+                    'profit': {'type': 'number'},
+                    'margin': {'type': 'number'},
+                    'margin_free': {'type': 'number'},
+                    'margin_level': {'type': 'number'},
+                    'margin_level_so': {'type': 'number'},
+                    'assets': {'type': 'number'},
+                    'liabilities': {'type': 'number'},
+                    'commission_blocked': {'type': 'number'},
+                    'name': {'type': 'string'},
+                    'server': {'type': 'string'},
+                    'currency': {'type': 'string'},
+                    'company': {'type': 'string'}
+                }
+            }
+        },
+        404: {
+            'description': 'Failed to get account information.'
+        },
+        500: {
+            'description': 'Internal server error.'
+        }
+    }
+})
+def account_info_endpoint():
+    """
+    Fetch Account Information
+    ---
+    description: Retrieve MetaTrader 5 account information.
+    """
+    try:
+        account = mt5.account_info()
+        if account is None:
+            return jsonify({"error": "Failed to get account information"}), 404
+
+        # Convert account info to a dictionary
+        account_dict = {
+            'login': account.login,
+            'trade_mode': account.trade_mode,
+            'leverage': account.leverage,
+            'limit_orders': account.limit_orders,
+            'margin_so_mode': account.margin_so_mode,
+            'trade_allowed': account.trade_allowed,
+            'trade_expert': account.trade_expert,
+            'margin_mode': account.margin_mode,
+            'currency_digits': account.currency_digits,
+            'margin_initial': account.margin_initial,
+            'margin_maintenance': account.margin_maintenance,
+            'margin_rate_initial': account.margin_rate_initial,
+            'margin_rate_maintenance': account.margin_rate_maintenance,
+            'margin_liquidation': account.margin_liquidation,
+            'margin_call': account.margin_call,
+            'balance': account.balance,
+            'credit': account.credit,
+            'equity': account.equity,
+            'profit': account.profit,
+            'margin': account.margin,
+            'margin_free': account.margin_free,
+            'margin_level': account.margin_level,
+            'margin_level_so': account.margin_level_so,
+            'assets': account.assets,
+            'liabilities': account.liabilities,
+            'commission_blocked': account.commission_blocked,
+            'name': account.name,
+            'server': account.server,
+            'currency': account.currency,
+            'company': account.company
+        }
+
+        return jsonify(account_dict), 200
+
+    except Exception as e:
+        logger.error(f"Error in account_info_endpoint: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
