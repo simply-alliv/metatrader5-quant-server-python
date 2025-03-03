@@ -1,10 +1,15 @@
 # backend/django/app/quant/indicators/trend.py
 
-def get_enhanced_swing_points(rates):
+import pandas as pd
+from typing import List
+
+def get_enhanced_swing_points(rates: pd.DataFrame):
     """Improved swing point detection based on proper highs/lows
 
     Args:
-        rates (list): List of candle data (open, high, low, close)
+        rates (DataFrame): DataFrame of candle data with columns (open, high, low, close).
+                         It is assumed that columns are accessible by integer index, 
+                         where index 3 is 'close' and index 4 is 'low'.
 
     Returns:
         tuple: Lists of swing highs and swing lows, each a list of dictionaries with 'index' and 'price'.
@@ -16,23 +21,23 @@ def get_enhanced_swing_points(rates):
         return highs, lows
 
     for i in range(2, len(rates)-2):
-        # Proper High: two lower highs on both sides
-        if (rates[i-2][3] < rates[i][3] and
-            rates[i-1][3] < rates[i][3] and
-            rates[i+1][3] < rates[i][3] and
-            rates[i+2][3] < rates[i][3]):
-            highs.append({'index': i, 'price': rates[i][3]})
+        # Proper High: two lower highs (close prices) on both sides
+        if (rates.iloc[i-2, 3] < rates.iloc[i, 3] and
+            rates.iloc[i-1, 3] < rates.iloc[i, 3] and
+            rates.iloc[i+1, 3] < rates.iloc[i, 3] and
+            rates.iloc[i+2, 3] < rates.iloc[i, 3]):
+            highs.append({'index': i, 'price': rates.iloc[i, 3]})
 
         # Proper Low: two higher lows on both sides
-        if (rates[i-2][4] > rates[i][4] and
-            rates[i-1][4] > rates[i][4] and
-            rates[i+1][4] > rates[i][4] and
-            rates[i+2][4] > rates[i][4]):
-            lows.append({'index': i, 'price': rates[i][4]})
+        if (rates.iloc[i-2, 4] > rates.iloc[i, 4] and
+            rates.iloc[i-1, 4] > rates.iloc[i, 4] and
+            rates.iloc[i+1, 4] > rates.iloc[i, 4] and
+            rates.iloc[i+2, 4] > rates.iloc[i, 4]):
+            lows.append({'index': i, 'price': rates.iloc[i, 4]})
 
     return highs, lows
 
-def detect_trend(highs, lows):
+def detect_trend(highs: List, lows: List):
     """Determine market trend based on swing points
 
     Args:
